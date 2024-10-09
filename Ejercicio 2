@@ -1,0 +1,37 @@
+install.packages("pacman")
+#Creador Karla Palacios
+#Ejercicio: Analisis de miRNAs
+library("pacman")
+p_load("dplyr",
+       "ggplot2",
+       "readr")
+Base_datos <- read_csv(file="https://raw.githubusercontent.com/ManuelLaraMVZ/Transcript-mica/main/Datos%20completos%20miRNAs%20ejercicio.csv")
+#View(Base_datos)
+head(Base_datos)
+Controles <- Base_datos %>% 
+  filter(Type=="Selected Control") %>% 
+  select(-Type)
+Controles
+Promedio_Controles <- Controles %>% 
+  mutate(Prom_Tx=(T1+T2+T3)/3,
+         Prom_Cx=(T1+T2+T3)/3) %>% 
+  select(-2,-3,-4,-5,-6,-7) %>% 
+  filter(miRNA=="U6 snRNA")
+Promedio_Controles
+
+G_Interes <- Base_datos %>% 
+  filter(Type=="Target") %>% 
+  select(-Type)
+G_Interes
+Promedio_Interes <- G_Interes %>% 
+  mutate(Prom_Tx=(T1+T2+T3)/3,
+         Prom_Cx=(T1+T2+T3)/3) %>% 
+  select(1,8,9)
+Promedio_Interes
+
+
+Analisis <- Promedio_Interes %>% 
+  mutate(DCT_Cx=Promedio_Interes$Prom_Cx-Promedio_Controles$Prom_Cx,
+         DCT_Tx=Promedio_Interes$Prom_Tx-Promedio_Controles$Prom_Tx)
+Analisis 
+head(Analisis)
